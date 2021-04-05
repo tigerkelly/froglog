@@ -18,10 +18,10 @@ The froglog program can create tables as needed by using the program option -A. 
 
 Since the message part is free form then you can create a meassage that has the following format to allow you to catagorize messages.
 
-	- froglog:INFO: Startup of froglog program.
-	- froglog:ERROR: Froglog has failed to start, port in use.
-	- froglog:WARN: No port given using default port 12998.
-	- froglog:P1: Priority one message.
+	- 'froglog:INFO: Startup of froglog program.'
+	- 'froglog:ERROR: Froglog has failed to start, port in use.'
+	- 'froglog:WARN: No port given using default port 12998.'
+	- 'froglog:P1: Priority one message.'
 	...
 	The message formats are endless.
 
@@ -39,3 +39,19 @@ The froglog program has **GUI** in another repository written in *Java* using *J
 
 About security, the froglog program and the postgreSQL database should not be accessed over the internet unless you use a VPN.  The way I personally setup access to the progreSQL database is to allow only the local users on the same host as the database to access it.  So if you can not SSH into the host then you do not have access to the database.
 
+## Usage:
+
+**froglog** \[-A\] \[-T numTables\] \[-U userName\] \[-P password\] \[-D dbName\] \[-M num\] \[-m maxMsg\] \[-a ipaddr\] \[-p portNum\] \[-K daysKept\]\n");
+   -a IPv4 address.
+   -p port number to listen on.
+   -K Number of days to keep in database tables.
+   -A Turn on auto table create.
+   -U DB user name to use. Default froglog
+   -P DB user password.
+   -D DB name to use. Default froglogdb
+   -M Max number of MBs flat log file can be before being archived.  Default 5 MB
+   -m Max message size.  Defaults to 2048
+   -T Max tables in database. Defaults to 32
+
+
+## Setup:
