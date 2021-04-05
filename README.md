@@ -55,4 +55,36 @@ About security, the froglog program and the postgreSQL database should not be ac
 	- -T Max tables in database. Defaults to 32
 
 
-## Setup:
+## Install:
+
+	As said before I used a **Raspberry Pi 4**, 4GB card with a 128GB SSD card and a USB 3.0 USB to Sata cable.  But this should work with any Linux like OS and hardware.
+
+	- sudo apt-get install postgresql postgresql-contrib libcurl4-openssl-dev gmake
+
+How to move a PostgreSQL database was taken from here.  The postgreSQL DB installed at the time of this writting was version 11, so change commands below to reflect your version.
+
+	[Move PostgreSQL database] (https://www.digitalocean.com/community/tutorials/how-to-move-a-postgresql-data-directory-to-a-new-location-on-ubuntu-16-04)
+
+	- sudo -u postgres psql
+	  postgres=# show data_directory
+	  \\q
+
+	**Create mount point for SSD drive.**
+
+	- sudo mkdir -p /ssd/db
+	- sudo chown pi:pi /ssd/db
+
+	**Move databse**
+	
+	- sudo systemctl stop postgresql
+	- sudo systemctl status postgresql
+	- sudo rsync -av /var/lib/postgresql /ssd/db
+	- sudo mv /var/lib/postgresql/11/main /var/lib/postgresql/11/main.bak
+
+	- sudo vi /etc/postgresql/11/main/postgresql.conf
+	  data_directory = '/ssd/db/postgresql/11/main'
+	
+	- sudo systemctl start postgresql
+	- sudo systemctl status postgresql
+
+	- sudo rm -rf /var/lib/postgresql/11/main.bak
