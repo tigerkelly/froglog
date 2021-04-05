@@ -17,22 +17,22 @@ The first colon ':' in the packet seperates the table name from the message, if 
 The froglog program can create tables as needed by using the program option -A. If the table does not exist it is created if it is a valid table name.  Tables by default are **NOT** created and it is best that you keep it that way.  I would not use the -A option unless you can control who sends messages or control table names used.
 
 Since the message part is free form then you can create a meassage that has the following format to allow you to catagorize messages.
-	'*froglog*:INFO - Startup of froglog program.'
-	'*froglog*:ERROR - Froglog has failed to start, port in use.'
-	'*froglog*:WARN - No port given using default port 12998.'
-	'*froglog*:P1: Priority one message.'
+	- *froglog*:INFO - Startup of froglog program.
+	- *froglog*:ERROR - Froglog has failed to start, port in use.
+	- *froglog*:WARN - No port given using default port 12998.
+	- *froglog*:P1: Priority one message.
 	...
 	The message formats are endless.
 
 With the above message formating you can search the flat file for any errors given by the program but you can use the power of SQL to query the froglog table.
 
-	**SQL** SELECT * from froglog where logmsg like 'ERROR%' and date(ts) = '2021-04-01';
+	SQL: SELECT * from froglog where logmsg like 'ERROR%' and date(ts) = '2021-04-01';
 
 The above SQL will list all errors that occured on the date given.
 
 The log tables are simple, they contian two fields.
 
-	**SQL** Create table logName (ts timestamptz NOT NULL DEFAULT NOW(), logmsg text);
+	SQL: Create table logName (ts timestamptz NOT NULL DEFAULT NOW(), logmsg text);
 
 The froglog program has **GUI** in another repository written in *Java* using *JavaFX*, see this GUI to access the froglog tables.
 
