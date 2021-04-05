@@ -10,17 +10,18 @@ The froglog program is **NOT** meant to be use across the internet because you d
 As I said above it uses UDP packets and it is very simple to use.  The packet format of the message is very flexible.
 The messge packet is broken up into 2 parts, table name and a message ie.
 
-	'froglog:Startup of froglog program.'
+	- 'froglog:Startup of froglog program.'
 
 The first colon ':' in the packet seperates the table name from the message, if the packet does not contain a colon then the message is written to the froglog table.  All messages wheather they have a table name or not are always logged to the flat file.  If an invalid table name is given it is saved to the froglog table.  All table names must follow *PostgreSQL* naming rules.
 
 The froglog program can create tables as needed by using the program option -A. If the table does not exist it is created if it is a valid table name.  Tables by default are **NOT** created and it is best that you keep it that way.  I would not use the -A option unless you can control who sends messages or control table names used.
 
 Since the message part is free form then you can create a meassage that has the following format to allow you to catagorize messages.
-	- *froglog*:INFO - Startup of froglog program.
-	- *froglog*:ERROR - Froglog has failed to start, port in use.
-	- *froglog*:WARN - No port given using default port 12998.
-	- *froglog*:P1: Priority one message.
+
+	- froglog:INFO: Startup of froglog program.
+	- froglog:ERROR: Froglog has failed to start, port in use.
+	- froglog:WARN: No port given using default port 12998.
+	- froglog:P1: Priority one message.
 	...
 	The message formats are endless.
 
