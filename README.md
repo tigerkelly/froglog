@@ -43,16 +43,16 @@ About security, the froglog program and the postgreSQL database should not be ac
 
 **froglog** \[-A\] \[-T numTables\] \[-U userName\] \[-P password\] \[-D dbName\] \[-M num\] \[-m maxMsg\] \[-a ipaddr\] \[-p portNum\] \[-K daysKept\]
 
-	- -a IPv4 address.
-	- -p port number to listen on.
-	- -K Number of days to keep in database tables.
-	- -A Turn on auto table create.
-	- -U DB user name to use. Default froglog
-	- -P DB user password.
-	- -D DB name to use. Default froglogdb
-	- -M Max number of MBs flat log file can be before being archived.  Default 5 MB
-	- -m Max message size.  Defaults to 2048
-	- -T Max tables in database. Defaults to 32
+	-a IPv4 address.
+	-p port number to listen on.
+	-K Number of days to keep in database tables.
+	-A Turn on auto table create.
+	-U DB user name to use. Default froglog
+	-P DB user password.
+	-D DB name to use. Default froglogdb
+	-M Max number of MBs flat log file can be before being archived.  Default 5 MB
+	-m Max message size.  Defaults to 2048
+	-T Max tables in database. Defaults to 32
 
 
 ## Install:
@@ -63,7 +63,7 @@ About security, the froglog program and the postgreSQL database should not be ac
 
 How to move a PostgreSQL database was taken from here.  The postgreSQL DB installed at the time of this writting was version 11, so change commands below to reflect your version.
 
-Move PostgreSQL database [here](https://www.digitalocean.com/community/tutorials/how-to-move-a-postgresql-data-directory-to-a-new-location-on-ubuntu-16-04).
+The move PostgreSQL database came from [here](https://www.digitalocean.com/community/tutorials/how-to-move-a-postgresql-data-directory-to-a-new-location-on-ubuntu-16-04).
 
 	- sudo -u postgres psql
 	  postgres=# show data_directory
