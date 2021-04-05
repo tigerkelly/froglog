@@ -26,13 +26,13 @@ Since the message part is free form then you can create a meassage that has the 
 
 With the above message formating you can search the flat file for any errors given by the program but you can use the power of SQL to query the froglog table.
 
-	**SQL:** SELECT * from froglog where logmsg like 'ERROR%' and date(ts) = '2021-04-01';
+	**SQL** SELECT * from froglog where logmsg like 'ERROR%' and date(ts) = '2021-04-01';
 
 The above SQL will list all errors that occured on the date given.
 
 The log tables are simple, they contian two fields.
 
-	**SQL:** Create table logName (ts timestamptz NOT NULL DEFAULT NOW(), logmsg text);
+	**SQL** Create table logName (ts timestamptz NOT NULL DEFAULT NOW(), logmsg text);
 
 The froglog program has **GUI** in another repository written in *Java* using *JavaFX*, see this GUI to access the froglog tables.
 
