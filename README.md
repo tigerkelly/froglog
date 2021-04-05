@@ -63,7 +63,7 @@ About security, the froglog program and the postgreSQL database should not be ac
 
 How to move a PostgreSQL database was taken from here.  The postgreSQL DB installed at the time of this writting was version 11, so change commands below to reflect your version.
 
-	Move PostgreSQL database [here](https://www.digitalocean.com/community/tutorials/how-to-move-a-postgresql-data-directory-to-a-new-location-on-ubuntu-16-04).
+Move PostgreSQL database [here](https://www.digitalocean.com/community/tutorials/how-to-move-a-postgresql-data-directory-to-a-new-location-on-ubuntu-16-04).
 
 	- sudo -u postgres psql
 	  postgres=# show data_directory
