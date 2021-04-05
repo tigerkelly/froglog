@@ -10,7 +10,7 @@ The froglog program is **NOT** meant to be use across the internet because you d
 As I said above it uses UDP packets and it is very simple to use.  The packet format of the message is very flexible.
 The messge packet is broken up into 2 parts, table name and a message ie.
 
-	'froglog:Startup of froglog program.'
+	- 'froglog:Startup of froglog program.'
 
 The first colon ':' in the packet seperates the table name from the message, if the packet does not contain a colon then the message is written to the froglog table.  All messages wheather they have a table name or not are always logged to the flat file.  If an invalid table name is given it is saved to the froglog table.  All table names must follow *PostgreSQL* naming rules.
 
