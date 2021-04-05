@@ -41,17 +41,18 @@ About security, the froglog program and the postgreSQL database should not be ac
 
 ## Usage:
 
-**froglog** \[-A\] \[-T numTables\] \[-U userName\] \[-P password\] \[-D dbName\] \[-M num\] \[-m maxMsg\] \[-a ipaddr\] \[-p portNum\] \[-K daysKept\]\n");
-   -a IPv4 address.
-   -p port number to listen on.
-   -K Number of days to keep in database tables.
-   -A Turn on auto table create.
-   -U DB user name to use. Default froglog
-   -P DB user password.
-   -D DB name to use. Default froglogdb
-   -M Max number of MBs flat log file can be before being archived.  Default 5 MB
-   -m Max message size.  Defaults to 2048
-   -T Max tables in database. Defaults to 32
+**froglog** \[-A\] \[-T numTables\] \[-U userName\] \[-P password\] \[-D dbName\] \[-M num\] \[-m maxMsg\] \[-a ipaddr\] \[-p portNum\] \[-K daysKept\]
+
+	- -a IPv4 address.
+	- -p port number to listen on.
+	- -K Number of days to keep in database tables.
+	- -A Turn on auto table create.
+	- -U DB user name to use. Default froglog
+	- -P DB user password.
+	- -D DB name to use. Default froglogdb
+	- -M Max number of MBs flat log file can be before being archived.  Default 5 MB
+	- -m Max message size.  Defaults to 2048
+	- -T Max tables in database. Defaults to 32
 
 
 ## Setup:
