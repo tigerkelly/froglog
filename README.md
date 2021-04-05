@@ -18,22 +18,22 @@ The froglog program can create tables as needed by using the program option -A. 
 
 Since the message part is free form then you can create a meassage that has the following format to allow you to catagorize messages.
 
-	- 'froglog:INFO: Startup of froglog program.'
-	- 'froglog:ERROR: Froglog has failed to start, port in use.'
-	- 'froglog:WARN: No port given using default port 12998.'
-	- 'froglog:P1: Priority one message.'
+	'froglog:INFO: Startup of froglog program.'
+	'froglog:ERROR: Froglog has failed to start, port in use.'
+	'froglog:WARN: No port given using default port 12998.'
+	'froglog:P1: Priority one message.'
 	...
 	The message formats are endless.
 
 With the above message formating you can search the flat file for any errors given by the program but you can use the power of SQL to query the froglog table.
 
-	SQL: SELECT * from froglog where logmsg like 'ERROR%' and date(ts) = '2021-04-01';
+	SQL: SELECT * FROM froglog WHERE logmsg LIKE 'ERROR%' AND DATE(ts) = '2021-04-01';
 
 The above SQL will list all errors that occured on the date given.
 
 The log tables are simple, they contian two fields.
 
-	SQL: Create table logName (ts timestamptz NOT NULL DEFAULT NOW(), logmsg text);
+	SQL: CREATE TABLE logName (ts timestamptz NOT NULL DEFAULT NOW(), logmsg text);
 
 The froglog program has **GUI** in another repository written in *Java* using *JavaFX*, see this GUI to access the froglog tables.
 
@@ -41,8 +41,8 @@ About security, the froglog program and the postgreSQL database should not be ac
 
 ## Usage:
 
-**froglog** \[-A\] \[-T numTables\] \[-U userName\] \[-P password\] \[-D dbName\] \[-M num\] \[-m maxMsg\] \[-a ipaddr\] \[-p portNum\] \[-K daysKept\]
-
+	**froglog** \[-A\] \[-T numTables\] \[-U userName\] \[-P password\] \[-D dbName\] \[-M num\] \[-m maxMsg\] \[-a ipaddr\] \[-p portNum\] \[-K daysKept\]
+	
 	-a IPv4 address.
 	-p port number to listen on.
 	-K Number of days to keep in database tables.
@@ -65,26 +65,49 @@ How to move a PostgreSQL database was taken from here.  The postgreSQL DB instal
 
 The move PostgreSQL database came from [here](https://www.digitalocean.com/community/tutorials/how-to-move-a-postgresql-data-directory-to-a-new-location-on-ubuntu-16-04).
 
-	- sudo -u postgres psql
-	  postgres=# show data_directory
-	  \\q
+	sudo -u postgres psql
+	postgres=# show data_directory
+	\\q
 
-	**Create mount point for SSD drive.**
+##Create mount point for SSD drive.**
 
-	- sudo mkdir -p /ssd/db
-	- sudo chown pi:pi /ssd/db
+	sudo mkdir -p /ssd/db
+	sudo chown pi:pi /ssd/db
 
-	**Move databse**
+##Setup SSD drive and mount it.
+
+	sudo wipefs -a /dev/sda
+	sudo parted --script /dev/sda mklabel gpt mkpart primary ext4 0% 100%
+	sudo mkfs.ext4 -F -t ext4 /dev/sda1
+	sudo e2label /dev/sda1 FroglogData
+	sudo mount -t ext4 -L FroglogData /ssd
+
+##Edit /etc/fstab so that is mounts automatically.
+
+	sudo vi /etc/fstab
+
+	Add line.
+	LABEL=FroglogData	/ssd	ext4	defaults 0 0
+
+##Move databse**
 	
-	- sudo systemctl stop postgresql
-	- sudo systemctl status postgresql
-	- sudo rsync -av /var/lib/postgresql /ssd/db
-	- sudo mv /var/lib/postgresql/11/main /var/lib/postgresql/11/main.bak
+	sudo systemctl stop postgresql
+	sudo systemctl status postgresql
+	sudo rsync -av /var/lib/postgresql /ssd/db
+	sudo mv /var/lib/postgresql/11/main /var/lib/postgresql/11/main.bak
 
-	- sudo vi /etc/postgresql/11/main/postgresql.conf
-	  data_directory = '/ssd/db/postgresql/11/main'
+	sudo vi /etc/postgresql/11/main/postgresql.conf
+	data_directory = '/ssd/db/postgresql/11/main'
 	
-	- sudo systemctl start postgresql
-	- sudo systemctl status postgresql
+	sudo systemctl start postgresql
+	sudo systemctl status postgresql
 
-	- sudo rm -rf /var/lib/postgresql/11/main.bak
+	sudo rm -rf /var/lib/postgresql/11/main.bak
+
+##Run froglog program as a service.
+
+Copy file froglog.service to /etc/systemd/system/froglog.service
+
+	sudo froglog.service /etc/systemd/system/froglog.service
+
+
