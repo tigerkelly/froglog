@@ -41,7 +41,8 @@ About security, the froglog program and the postgreSQL database should not be ac
 
 ## Usage:
 
-	**froglog** \[-A\] \[-T numTables\] \[-U userName\] \[-P password\] \[-D dbName\] \[-M num\] \[-m maxMsg\] \[-a ipaddr\] \[-p portNum\] \[-K daysKept\]
+	froglog \[-A\] \[-T numTables\] \[-U userName\] \[-P password\] \[-D dbName\] \[-M num\] \[-m maxMsg\]
+		\[-a ipaddr\] \[-p portNum\] \[-K daysKept\]
 	
 	-a IPv4 address.
 	-p port number to listen on.
@@ -57,7 +58,8 @@ About security, the froglog program and the postgreSQL database should not be ac
 
 ## Install:
 
-	As said before I used a **Raspberry Pi 4**, 4GB card with a 128GB SSD card and a USB 3.0 USB to Sata cable.  But this should work with any Linux like OS and hardware.
+	As said before I used a **Raspberry Pi 4**, 4GB card with a 128GB SSD card and a USB 3.0 USB to Sata cable.
+	But this should work with any Linux like OS and hardware.
 
 	- sudo apt-get install postgresql postgresql-contrib libcurl4-openssl-dev gmake
 
@@ -73,6 +75,9 @@ The move PostgreSQL database came from [here](https://www.digitalocean.com/commu
 
 	sudo mkdir -p /ssd/db
 	sudo chown pi:pi /ssd/db
+
+	sudo mkdir -p /ssd/Froglog
+	sudo chown pi:pi /ssd/Froglog
 
 ##Setup SSD drive and mount it.
 
@@ -109,5 +114,6 @@ The move PostgreSQL database came from [here](https://www.digitalocean.com/commu
 Copy file froglog.service to /etc/systemd/system/froglog.service
 
 	sudo froglog.service /etc/systemd/system/froglog.service
-
+	sudo systemctl enable froglog.service
+	sudo systemctl start froglog.service
 
