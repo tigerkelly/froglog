@@ -55,23 +55,27 @@ About security, the froglog program and the postgreSQL database should not be ac
 	-m Max message size.  Defaults to 2048
 	-T Max tables in database. Defaults to 32
 
+## Manual Install:
 
-## Install:
-
-	As said before I used a **Raspberry Pi 4**, 4GB card with a 128GB SSD card and a USB 3.0 USB to Sata cable.
-	But this should work with any Linux like OS and hardware.
+As said before I used a **Raspberry Pi 4**, 4GB card with a 128GB SSD card and a USB 3.0 to Sata cable.  But this should work with any Linux like OS and hardware.
 
 	- sudo apt-get install postgresql postgresql-contrib libcurl4-openssl-dev gmake
 
-How to move a PostgreSQL database was taken from here.  The postgreSQL DB installed at the time of this writting was version 11, so change commands below to reflect your version.
+Create a froglog user.
+ 
+	sudo useradd -m -p <YOUR_PASSWORD> froglog
 
-The move PostgreSQL database came from [here](https://www.digitalocean.com/community/tutorials/how-to-move-a-postgresql-data-directory-to-a-new-location-on-ubuntu-16-04).
+### Log into psql and create Froglog DB
 
 	sudo -u postgres psql
-	postgres=# show data_directory
-	\\q
+	At the postgres=# prompt type
+		show data_directory
+	To create the froglog database type
+		create database froglogdb;
+	To quit psql type
+		\\q
 
-##Create mount point for SSD drive.**
+## Create mount point for SSD drive.
 
 	sudo mkdir -p /ssd/db
 	sudo chown pi:pi /ssd/db
@@ -79,7 +83,9 @@ The move PostgreSQL database came from [here](https://www.digitalocean.com/commu
 	sudo mkdir -p /ssd/Froglog
 	sudo chown pi:pi /ssd/Froglog
 
-##Setup SSD drive and mount it.
+## Setup SSD drive and mount it.
+
+These commands will wipe the SSD, format and label it.  **NOTE:** You will lose all data on the SSD.
 
 	sudo wipefs -a /dev/sda
 	sudo parted --script /dev/sda mklabel gpt mkpart primary ext4 0% 100%
@@ -87,14 +93,17 @@ The move PostgreSQL database came from [here](https://www.digitalocean.com/commu
 	sudo e2label /dev/sda1 FroglogData
 	sudo mount -t ext4 -L FroglogData /ssd
 
-##Edit /etc/fstab so that is mounts automatically.
+## Edit /etc/fstab so that is mounts automatically.
 
 	sudo vi /etc/fstab
 
 	Add line.
 	LABEL=FroglogData	/ssd	ext4	defaults 0 0
 
-##Move databse**
+## Move databse
+
+How to move a PostgreSQL database was taken from [here](https://www.digitalocean.com/community/tutorials/how-to-move-a-postgresql-data-directory-to-a-new-location-on-ubuntu-16-04).  The postgreSQL DB installed at the time of this writting was version 11, so change commands below to reflect your version.
+
 	
 	sudo systemctl stop postgresql
 	sudo systemctl status postgresql
@@ -109,11 +118,11 @@ The move PostgreSQL database came from [here](https://www.digitalocean.com/commu
 
 	sudo rm -rf /var/lib/postgresql/11/main.bak
 
-##Run froglog program as a service.
+## Run froglog program as a service.
 
 Copy file froglog.service to /etc/systemd/system/froglog.service
 
-	sudo froglog.service /etc/systemd/system/froglog.service
+	sudo cp froglog.service /etc/systemd/system/froglog.service
 	sudo systemctl enable froglog.service
 	sudo systemctl start froglog.service
 
