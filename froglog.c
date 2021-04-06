@@ -1,4 +1,3 @@
-
 /* Program to receive data for logging to a file. */
 
 #include <stdio.h>      // for printf() and fprintf()
@@ -29,7 +28,7 @@
 #define FROGLOG_LOG		"froglog"
 #define FROGLOG_PORT	12998
 #define FROGLOG_PWD		"LetFroglogin2"
-#define FROGLOG_DB		"/ssd/Froglog/froglog.db"
+#define FROGLOG_DB		"froglog.ini"
 #define MILLION			1000000
 #define KILOBYTE		1024
 #define MAX_MB_NUM		5
@@ -40,6 +39,7 @@
 #define MAX_TABLES		32
 #define MAX_MSG_SIZE	2048
 #define MIN_MSG_SIZE	128
+#define DEFAULT_ARCHIVES	5
 
 #define MAXRECVSTRING	1024  // Longest string to receive
 
@@ -50,6 +50,7 @@ typedef struct _table_ {
 
 Table *tables = null;
 
+int maxArchives = 0;
 int maxTables = 0;
 int postgres_version = 0;
 int daysKept = DAYS_KEPT;
@@ -62,25 +63,24 @@ bool autoTableCreate = false;
 char *dbUser = NULL;
 char *userPassword = NULL;
 char *dbName = NULL;
-char *pwdDB = NULL;
 int maxMbNum = MAX_MB_NUM;
 int maxMsgSize = MAX_MSG_SIZE;
+
+IniFile *ini = NULL;
 
 FILE *out = NULL;
 char basePath[1024];
 char logName[64];
 char *logIp = NULL;
 char filePath[PATH_MAX];
-char backupPath1[PATH_MAX];
-char backupPath2[PATH_MAX];
+// char backupPath1[PATH_MAX];
+// char backupPath2[PATH_MAX];
 int repeatCount = 0;
 int repeatRow = 0;
 char *lastMsg = NULL;
 char *lastRow = NULL;
 char *msgBuf = NULL;
 char *tmpMsgBuf = NULL;
-
-IniFile *ini = NULL;
 
 void DieWithError(char *errorMessage);  // External error handling function
 void archiveLog(void);
@@ -181,9 +181,6 @@ int main(int argc, char *argv[]) {
 	if (dbName == null)
 		dbName = "froglogdb";
 	
-	if (pwdDB == null)
-		pwdDB = FROGLOG_DB;
-	
 	if (maxMbNum < 1)
 		maxMbNum = MAX_MB_NUM;
 	
@@ -234,8 +231,8 @@ int main(int argc, char *argv[]) {
 
 
 	memset(filePath, 0, sizeof(filePath));
-	memset(backupPath1, 0, sizeof(backupPath1));
-	memset(backupPath2, 0, sizeof(backupPath2));
+	// memset(backupPath1, 0, sizeof(backupPath1));
+	// memset(backupPath2, 0, sizeof(backupPath2));
 
 	strcpy(basePath, BASE_PATH);
 	p = getenv("FROGLOG_BASE_PATH");
@@ -255,8 +252,8 @@ int main(int argc, char *argv[]) {
 		strcpy(logName, p);
 
 	sprintf(filePath, "%s/%s", basePath, logName);
-	sprintf(backupPath1, "%s/%s.1", basePath, logName);
-	sprintf(backupPath2, "%s/%s.2", basePath, logName);
+	// sprintf(backupPath1, "%s/%s.1", basePath, logName);
+	// sprintf(backupPath2, "%s/%s.2", basePath, logName);
 
 	// fprintf(stderr, "filePath %s\n", filePath);
 	out = fopen(filePath, "a");	// append mode
@@ -302,7 +299,12 @@ int main(int argc, char *argv[]) {
 		}
 	}
 
-	// ini = iniCreate(pwdDB);
+	ini = iniCreate(FROGLOG_DB);
+	if (ini != NULL) {
+		maxArchives = iniGetIntValue(ini, "System", "maxArchives");
+	}
+	if (maxArchives <= 0 || maxArchives > 16)
+		maxArchives = DEFAULT_ARCHIVES;
 
 	char settings[1024];
 
@@ -452,6 +454,40 @@ void archiveLog() {
 	fprintf(out, "Archive log, changing to new file.\n");
 	fclose(out);
 
+	char from[PATH_MAX];
+	char to[PATH_MAX];
+
+	sprintf(from, "%s/froglog.log.%d.zip", BASE_PATH, maxArchives);
+	if (access(from, F_OK) != -1)
+		remove(from);
+
+	for (int i = (maxArchives - 1); i > 1; i--) {
+		sprintf(from, "%s/froglog.log.%d.zip", BASE_PATH, i);
+		if (access(from, F_OK) != -1) {
+			sprintf(to, "%s/froglog.log.%d.zip", BASE_PATH, (i + 1));
+			rename(from, to);
+		}
+	}
+
+	sprintf(from, "%s/froglog.log", BASE_PATH);
+	sprintf(to, "%s/froglog.log.1", BASE_PATH);
+	rename(from, to);
+
+	char cmd[256];
+	sprintf(cmd, "/usr/bin/zip %s/froglog.log.1", BASE_PATH);
+	system(cmd);
+
+	out = fopen(filePath, "a");
+	if (out == NULL) {
+		DieWithError("2. fopen() failed");
+	}
+}
+
+#if(0)
+void archiveLog() {
+	fprintf(out, "Archive log, changing to new file.\n");
+	fclose(out);
+
 	if( access( backupPath2, F_OK ) != -1 ) {
 		remove( backupPath2);
 	}
@@ -472,6 +508,7 @@ void archiveLog() {
 		DieWithError("2. fopen() failed");
 	}
 }
+#endif
 
 void DieWithError(char *errMsg) {
 	fprintf(stderr, "%s\n", errMsg);
