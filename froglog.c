@@ -224,9 +224,27 @@ int main(int argc, char *argv[]) {
 
 	// printf("IP: %s:%d\n", logIp, portNum);
 
-	// Bind to the broadcast port
-	if (bind(sock, (struct sockaddr *) &broadcastAddr, sizeof(broadcastAddr)) < 0) {
-		DieWithError("bind() failed");
+	// The program maybe started before the network is up and assigned an IP address.
+	bool bindFlag = false;
+	for(int i = 0; i < 20; i++) {
+		// Bind to the broadcast port
+		int r = bind(sock, (struct sockaddr *) &broadcastAddr, sizeof(broadcastAddr));
+
+		if (r < 0) {
+			if (errno != EADDRNOTAVAIL) {
+				fprintf(stderr, "Errno: %d, %s\n", errno, strerror(errno));
+				DieWithError("bind failed.");
+			} else {
+				sleep(10);		// sleep and try again.
+			}
+		} else {
+			bindFlag = true;
+			break;
+		}
+	}
+
+	if (bindFlag == false) {
+		DieWithError("Cound not bind to IP address after 2 minutes. Aborting..");
 	}
 
 

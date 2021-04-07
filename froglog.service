@@ -1,0 +1,16 @@
+
+[Unit]
+Description=Froglog service
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+ExecStart=/home/pi/bin/froglog -a 192.168.0.30
+WorkingDirectory=/home/pi/Froglog
+StandardOutput=inherit
+StandardError=inherit
+Restart=on-failure
+User=pi
+
+[Install]
+WantedBy=multi-user.target

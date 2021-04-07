@@ -73,7 +73,7 @@ As said before I used a **Raspberry Pi 4**, 4GB card with a 128GB SSD card and a
 		create user froglog;
 	Grant access to DB type:
 		grant all privileges on database froglogdb to froglog;
-	To quit psql type
+	To quit psql type:
 		\\q
 
 ### Create mount point for SSD drive.
@@ -123,9 +123,17 @@ How to move a PostgreSQL database was taken from [here](https://www.digitalocean
 
 ### Run froglog program as a service.
 
+Change the froglog.service file to reflect the IP address you want to listen on.
+
+	vi froglog.service
+	Change the IP address.
+
 Copy file froglog.service to /etc/systemd/system/froglog.service
 
 	sudo cp froglog.service /etc/systemd/system/froglog.service
 	sudo systemctl enable froglog.service
 	sudo systemctl start froglog.service
 
+The Froglog system has a GUI interface written in JavaFX in the repository **froglog_gui**.  This GUI allows you to query the logs tables as well as purge, create and delete them.
+
+The froglog program will create a table called **froglog** if it does not exist.  By default no other tables exist in the database, so you need to create the log tables of the applications you are using.  Use the froglog_gui program to do this or set the option -A to allow tables to be created on the fly.
