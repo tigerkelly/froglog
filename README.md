@@ -41,7 +41,7 @@ About security, the froglog program and the postgreSQL database should not be ac
 
 ## Usage:
 
-	froglog \[-A\] \[-T numTables\] \[-U userName\] \[-P password\] \[-D dbName\] \[-M num\] \[-m maxMsg\]
+	froglog \[-A\] \[-T numTables\] \[-U userName\] \[-D dbName\] \[-M num\] \[-m maxMsg\]
 		\[-a ipaddr\] \[-p portNum\] \[-K daysKept\]
 	
 	-a IPv4 address.
@@ -49,11 +49,48 @@ About security, the froglog program and the postgreSQL database should not be ac
 	-K Number of days to keep in database tables.
 	-A Turn on auto table create.
 	-U DB user name to use. Default froglog
-	-P DB user password.
 	-D DB name to use. Default froglogdb
 	-M Max number of MBs flat log file can be before being archived.  Default 5 MB
 	-m Max message size.  Defaults to 2048
 	-T Max tables in database. Defaults to 32
+
+You could use the froglog.ini file  to set the above option instead of the command line.
+
+	[System]
+		maxArchives = 5
+		portNum = 12998
+		ipAddr = 192.168.0.30
+		daysKept = 30
+		autoTableCreate = false
+		dbUser = froglog
+		dbName = froglogdb
+		maxMbNum = 5
+		maxMsgSize = 2048
+		maxTables = 32
+		adminPassword = sha256_Hex_string
+	{End]
+
+The keywords are case sensive.
+
+- maxArchives, controls how many archive files are kept.
+- portNum, the port number to listne on.
+- ipAddr, IP address of interface to listen on.
+- daysKept, number of days to keep in any log table.
+- autoTableCreate, Whether to allow auto create of tables.
+- dnUser, user used to access froglog database.
+- dbName, name of froglog dayabase.
+- maxMbNum, max number of MB of flat file before being archived.
+- maxMsgSize, max size in bytes a message can be.
+- maxTables, max number of tables that can be in database.
+- adminPassword, A sha256 sum of the password.
+
+You can send UDP packets from most languages including Bash script.
+
+	To send from Bash use the following format.
+
+	echo -n "tableName:Message" > /dev/udp/192.168.0.30/12998
+
+Please search the internet for code to send UDP packets with the language you are using.
 
 ## Manual Install:
 
@@ -101,7 +138,7 @@ I like labeling the drives so that I can mount them by label instead of device. 
 	sudo vi /etc/fstab
 
 	Add line.
-	LABEL=FroglogData	/ssd	ext4	defaults 0 0
+	LABEL=FroglogData	/ssd	ext4	defaults,noatime 0 2
 
 ### Move databse
 

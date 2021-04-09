@@ -61,7 +61,7 @@ bool purgeStop = false;
 bool autoTableCreate = false;
 
 char *dbUser = NULL;
-char *userPassword = NULL;
+// char *userPassword = NULL;
 char *dbName = NULL;
 int maxMbNum = MAX_MB_NUM;
 int maxMsgSize = MAX_MSG_SIZE;
@@ -116,6 +116,27 @@ int main(int argc, char *argv[]) {
 		printf("Can't catch SIGUSR1\n");
     }
 
+	ini = iniCreate(FROGLOG_DB);
+	if (ini != NULL) {
+		maxArchives = iniGetIntValue(ini, "System", "maxArchives");
+		// userPassword = iniGetString(ini, "System", "userPassword");
+		portNum = iniGetIntValue(ini, "System", "portNum");
+		daysKept = iniGetIntValue(ini, "System", "daysKept");
+		logIp = iniGetString(ini, "System", "ipAddr");
+		autoTableCreate = iniGetBooleanValue(ini, "System", "autoTableCreate");
+		char *p = iniGetString(ini, "System", "dbUser");
+		if (p != null)
+			dbUser = strdup(p);
+		p = iniGetString(ini, "System", "dbName");
+		if (p != null)
+			dbName = strdup(p);
+		maxMbNum = iniGetIntValue(ini, "System", "maxMbNum");
+		maxMsgSize = iniGetIntValue(ini, "System", "maxMsgSize");
+		maxTables = iniGetIntValue(ini, "System", "maxTables");
+	}
+
+	// Command line args override froglog.ini file.
+
 	for (int i = 1; i < argc; i++) {
 		if (argv[i][0] == '-') {
 			switch(argv[i][1]) {
@@ -134,9 +155,9 @@ int main(int argc, char *argv[]) {
 			case 'U':				// User name.
 				dbUser = strdup(argv[i+1]);
 				break;
-			case 'P':				// User password.
-				userPassword = strdup(argv[i+1]);
-				break;
+//			case 'P':				// User password.
+//				userPassword = strdup(argv[i+1]);
+//				break;
 			case 'D':				// database name.
 				dbName = strdup(argv[i+1]);
 				break;
@@ -167,6 +188,9 @@ int main(int argc, char *argv[]) {
 		}
 	}
 
+	if (maxArchives <= 0 || maxArchives > 16)
+		maxArchives = DEFAULT_ARCHIVES;
+
 	if (portNum == 0)
 		portNum = FROGLOG_PORT;
 	
@@ -175,8 +199,8 @@ int main(int argc, char *argv[]) {
 	
 	if (dbUser == null)
 		dbUser = "froglog";
-	if (userPassword == null)
-		userPassword = FROGLOG_PWD;
+//	if (userPassword == null)
+//		userPassword = FROGLOG_PWD;
 
 	if (dbName == null)
 		dbName = "froglogdb";
@@ -316,13 +340,6 @@ int main(int argc, char *argv[]) {
 			PQclear(res);
 		}
 	}
-
-	ini = iniCreate(FROGLOG_DB);
-	if (ini != NULL) {
-		maxArchives = iniGetIntValue(ini, "System", "maxArchives");
-	}
-	if (maxArchives <= 0 || maxArchives > 16)
-		maxArchives = DEFAULT_ARCHIVES;
 
 	char settings[1024];
 
