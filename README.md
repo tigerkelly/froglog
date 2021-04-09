@@ -35,9 +35,9 @@ The log tables are simple, they contian two fields.
 
 	SQL: CREATE TABLE logName (ts timestamptz NOT NULL DEFAULT NOW(), logmsg text);
 
-The froglog program has **GUI** in another repository written in *Java* using *JavaFX*, see this GUI to access the froglog tables.
+The froglog program has **GUI** in another repository written in *Java* using *JavaFX*, see **froglog_gui** to access the froglog tables.
 
-About security, the froglog program and the postgreSQL database should not be accessed over the internet unless you use a VPN.  The way I personally setup access to the progreSQL database is to allow only the local users on the same host as the database to access it.  So if you can not SSH into the host then you do not have access to the database.
+About security, the froglog program and the postgreSQL database should not be accessed over the internet unless you use a VPN.  The way I personally setup access to the progreSQL database is to allow only the local users on the same host as the database to access it.  So if you can not SSH into the host then you do not have access to the database but can still send log messages.
 
 ## Usage:
 
@@ -54,7 +54,7 @@ About security, the froglog program and the postgreSQL database should not be ac
 	-m Max message size.  Defaults to 2048
 	-T Max tables in database. Defaults to 32
 
-You could use the froglog.ini file  to set the above option instead of the command line.
+You could use the froglog.ini file  to set the above option instead of the command line.  The command line overrides the ini file.
 
 	[System]
 		maxArchives = 5
@@ -174,3 +174,5 @@ Copy file froglog.service to /etc/systemd/system/froglog.service
 The Froglog system has a GUI interface written in JavaFX in the repository **froglog_gui**.  This GUI allows you to query the logs tables as well as purge, create and delete them.
 
 The froglog program will create a table called **froglog** if it does not exist.  By default no other tables exist in the database, so you need to create the log tables of the applications you are using.  Use the froglog_gui program to do this or set the option -A to allow tables to be created on the fly.
+
+Please send me an email if you need help and to let me know what projects you are using this logging system with, thanks.

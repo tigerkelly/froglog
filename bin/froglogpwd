@@ -1,0 +1,13 @@
+#!/bin/bash
+# Generate a key used by froglog to enable table create.
+
+if [ $# -ne 2 ]; then
+	echo "Usage froglogpwd password path_to_froglog.ini"
+	exit 1
+fi
+
+m=`echo -n "$1" | sha256sum | tr -d "[:space:]-"`
+
+~/bin/iniset $2 System adminPassword $m
+
+exit 0
