@@ -3,16 +3,16 @@ Remote logging system that uses flat file as well as a postgresql database.
 
 I created this program because I wanted a generic logging system for my Raspberry Pi projects.  I do a lot of embedded type projects and was tired of writting the same logging system over and over again.
 
-I personally use a Raspberry Pi 4, 4GB card with an SSD drive to hold the flat file and database.  I use the SSD because the SD card would be too slow and databases tend to eat up SD cards quickly.  Put a fan on iti to kept is cool and plug it into your network and now you can access it from all your programs.
+I personally use a Raspberry Pi 4, 4GB card with an SSD drive to hold the flat file and database.  I use the SSD because the SD card would be too slow and databases tend to eat up SD cards quickly.  Put a fan on it to kept is cool and plug it into your network and now you can access it from all your programs and systems.
 
 The froglog program is **NOT** meant to be use across the internet because you do not want people randomly adding log records to it.  It uses UDP packets and you would have to setup firewall settings to allow them to pass, which is a pain.  If you must go across the internet then use a VPN so that you do not have to set firewall settings.
 
 As I said above it uses UDP packets and it is very simple to use.  The packet format of the message is very flexible.
 The messge packet is broken up into 2 parts, table name and a message ie.
 
-	- 'froglog:Startup of froglog program.'
+	'froglog:Startup of froglog program.'
 
-The first colon ':' in the packet seperates the table name from the message, if the packet does not contain a colon then the message is written to the froglog table.  All messages wheather they have a table name or not are always logged to the flat file.  If an invalid table name is given it is saved to the froglog table.  All table names must follow *PostgreSQL* naming rules.
+The first colon ':' in the packet seperates the table name from the message, if the packet does not contain a colon then the message is written to the froglog table.  All messages wheather they have a table name or not are always logged to the flat file.  If an invalid table name is given it is saved to the froglog table.  All table names must follow **_PostgreSQLi_** naming rules.
 
 The froglog program can create tables as needed by using the program option -A. If the table does not exist it is created if it is a valid table name.  Tables by default are **NOT** created and it is best that you keep it that way.  I would not use the -A option unless you can control who sends messages or control table names used.
 
@@ -45,7 +45,7 @@ About security, the froglog program and the postgreSQL database should not be ac
 		\[-a ipaddr\] \[-p portNum\] \[-K daysKept\]
 	
 	-a IPv4 address.
-	-p port number to listen on.
+	-p Port number to listen on.
 	-K Number of days to keep in database tables.
 	-A Turn on auto table create.
 	-U DB user name to use. Default froglog
@@ -54,7 +54,7 @@ About security, the froglog program and the postgreSQL database should not be ac
 	-m Max message size.  Defaults to 2048
 	-T Max tables in database. Defaults to 32
 
-You could use the froglog.ini file  to set the above option instead of the command line.  The command line overrides the ini file.
+You could use the froglog.ini file to set the above options instead of the command line.  The command line overrides the ini file.
 
 	[System]
 		maxArchives = 5
@@ -73,14 +73,14 @@ You could use the froglog.ini file  to set the above option instead of the comma
 The keywords are case sensive.
 
 - maxArchives, controls how many archive files are kept.
-- portNum, the port number to listne on.
+- portNum, the port number to listen on.
 - ipAddr, IP address of interface to listen on.
 - daysKept, number of days to keep in any log table.
 - autoTableCreate, Whether to allow auto create of tables.
-- dnUser, user used to access froglog database.
-- dbName, name of froglog dayabase.
+- dbUser, user name used to access froglog database.
+- dbName, name of froglog database.
 - maxMbNum, max number of MB of flat file before being archived.
-- maxMsgSize, max size in bytes a message can be.
+- maxMsgSize, max size, in bytes, a message can be.
 - maxTables, max number of tables that can be in database.
 - adminPassword, A sha256 sum of the password.
 
@@ -133,14 +133,14 @@ I like labeling the drives so that I can mount them by label instead of device. 
 	sudo mkdir -p /ssd/Froglog
 	sudo chown pi:pi /ssd/Froglog
 
-### Edit /etc/fstab so that is mounts automatically.
+### Edit /etc/fstab so that it is mounted automatically.
 
 	sudo vi /etc/fstab
 
 	Add line.
 	LABEL=FroglogData	/ssd	ext4	defaults,noatime 0 2
 
-### Move databse
+### Move database
 
 How to move a PostgreSQL database was taken from [here](https://www.digitalocean.com/community/tutorials/how-to-move-a-postgresql-data-directory-to-a-new-location-on-ubuntu-16-04).  The postgreSQL DB installed at the time of this writting was version 11, so change commands below to reflect your version.
 
