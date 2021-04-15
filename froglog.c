@@ -82,7 +82,7 @@ char *lastRow = NULL;
 char *msgBuf = NULL;
 char *tmpMsgBuf = NULL;
 
-void DieWithError(char *errorMessage);  // External error handling function
+void DieWithError(char *errorMessage, ...);  // External error handling function
 void archiveLog(void);
 void handleSignal(int sig);
 void handleArchive(int sig);
@@ -300,7 +300,7 @@ int main(int argc, char *argv[]) {
 	// fprintf(stderr, "filePath %s\n", filePath);
 	out = fopen(filePath, "a");	// append mode
 	if (out == NULL) {
-		DieWithError("fopen() failed");
+		DieWithError("fopen() failed, %s", filePath);
 	}
 
 	msgToLog(FROGLOG_LOG, "*** Froglog logging started ***");
@@ -545,8 +545,13 @@ void archiveLog() {
 }
 #endif
 
-void DieWithError(char *errMsg) {
-	fprintf(stderr, "%s\n", errMsg);
+void DieWithError(char *errMsg, ...) {
+	va_list valist;
+
+	va_start(valist, errMsg);
+
+	vsprintf(tmpMsgBuf, errMsg, valist);
+	fprintf(stderr, "%s\n", tmpMsgBuf);
 
 	if (conn != null)
 		PQfinish(conn);

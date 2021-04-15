@@ -57,6 +57,7 @@ About security, the froglog program and the postgreSQL database should not be ac
 You could use the froglog.ini file to set the above options instead of the command line.  The command line overrides the ini file.
 
 	[System]
+		version = 1.0.0
 		maxArchives = 5
 		portNum = 12998
 		ipAddr = 192.168.0.30
@@ -96,13 +97,13 @@ Please search the internet for code to send UDP packets with the language you ar
 
 As said before I used a **Raspberry Pi 4**, 4GB card with a 128GB SSD card and a USB 3.0 to Sata cable.  But this should work with any Linux like OS and hardware.
 
-	- sudo apt-get install postgresql postgresql-contrib libcurl4-openssl-dev gmake zip
+	sudo apt-get install postgresql postgresql-contrib libcurl4-openssl-dev gmake zip
 
 ### Log into psql and create Froglog DB
 
 	sudo -u postgres psql
 	At the postgres=# prompt type:
-		show data_directory
+		show data_directory;
 	Save the output to be used below.
 	To create the froglog database type:
 		create database froglogdb;
@@ -110,8 +111,12 @@ As said before I used a **Raspberry Pi 4**, 4GB card with a 128GB SSD card and a
 		create user froglog;
 	Grant access to DB type:
 		grant all privileges on database froglogdb to froglog;
+	Give user a passord:
+		alter role froglog with password 'LetFroglogin2';
+	Create froglog table;
+		create table froglog (ts timestamptz NOT NULL DEFAULT NOW(), logmsg text);
 	To quit psql type:
-		\\q
+		\q
 
 ### Create mount point for SSD drive.
 
@@ -131,7 +136,9 @@ These commands will wipe the SSD, format and label it.  **NOTE:** You will lose 
 I like labeling the drives so that I can mount them by label instead of device.  I do this because the SSD device name (/dev/sda1) can change based on the other USB drives found when booting up.
 
 	sudo mkdir -p /ssd/Froglog
-	sudo chown pi:pi /ssd/Froglog
+	sudo chown froglog:froglog /ssd/Froglog
+	sudo touch /ssd/Froglog/froglog.log
+	sudo chown froglog:froglog /ssd/Froglog/froglog.log
 
 ### Edit /etc/fstab so that it is mounted automatically.
 
@@ -158,18 +165,28 @@ How to move a PostgreSQL database was taken from [here](https://www.digitalocean
 
 	sudo rm -rf /var/lib/postgresql/11/main.bak
 
+### Add user froglog
+
+	sudo adduser froglog
+
 ### Run froglog program as a service.
 
 Change the froglog.service file to reflect the IP address you want to listen on.
 
-	vi froglog.service
-	Change the IP address.
+	vi froglog.ini
+	Change the ipAddr to match your needs.
+	If you local eth0 network address is 192.168.0.23 then make
+	sure ipAddr matches it.
 
 Copy file froglog.service to /etc/systemd/system/froglog.service
 
 	sudo cp froglog.service /etc/systemd/system/froglog.service
 	sudo systemctl enable froglog.service
 	sudo systemctl start froglog.service
+
+#### To get status of froglog service.
+
+	sudo journalctl frolog
 
 The Froglog system has a GUI interface written in JavaFX in the repository **froglog_gui**.  This GUI allows you to query the logs tables as well as purge, create and delete them.
 
