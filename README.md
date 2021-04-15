@@ -97,7 +97,7 @@ Please search the internet for code to send UDP packets with the language you ar
 
 As said before I used a **Raspberry Pi 4**, 4GB card with a 128GB SSD card and a USB 3.0 to Sata cable.  But this should work with any Linux like OS and hardware.
 
-	sudo apt-get install postgresql postgresql-contrib libcurl4-openssl-dev gmake zip
+	sudo apt-get install postgresql postgresql-contrib libcurl4-openssl-dev zip
 
 ### Log into psql and create Froglog DB
 
